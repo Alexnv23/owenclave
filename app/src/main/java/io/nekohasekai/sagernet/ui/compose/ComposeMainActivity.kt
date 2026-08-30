@@ -209,8 +209,8 @@ class ComposeMainActivity : ComponentActivity(), SagerConnection.Callback {
                         ).apply {
                             name = "SuperNet"
                             subscription = io.nekohasekai.sagernet.database.SubscriptionBean().apply {
-                                link = subUrl
-                                name = "SuperNet"
+                                this.link = subUrl
+                                this.name = "SuperNet"
                             }
                         }
                         val created = io.nekohasekai.sagernet.database.GroupManager.createGroup(group)
