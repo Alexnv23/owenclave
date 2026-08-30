@@ -422,17 +422,17 @@ val LightAmber = lightColorScheme(
     outline = Color(0xFF7C7563), surfaceTint = Color(0xFFFFC107),
 )
 val DarkAmber = darkColorScheme(
-    primary = Color(0xFFFFB300), onPrimary = Color(0xFF3F2D00),
-    primaryContainer = Color(0xFF5C4400), onPrimaryContainer = Color(0xFFFFE08D),
-    secondary = Color(0xFFFFB300), onSecondary = Color(0xFF3F2D00),
-    secondaryContainer = Color(0xFF5C4400), onSecondaryContainer = Color(0xFFFFE08D),
-    tertiary = Color(0xFFE9C36B), onTertiary = Color(0xFF3D2E00),
-    tertiaryContainer = Color(0xFF584400), onTertiaryContainer = Color(0xFFFFE08D),
+    primary = Color(0xFFD9B95C), onPrimary = Color(0xFF120D04),
+    primaryContainer = Color(0xFF3D301C), onPrimaryContainer = Color(0xFFF2DC93),
+    secondary = Color(0xFFD9B95C), onSecondary = Color(0xFF120D04),
+    secondaryContainer = Color(0xFF3D301C), onSecondaryContainer = Color(0xFFF2DC93),
+    tertiary = Color(0xFFE6C765), onTertiary = Color(0xFF120D04),
+    tertiaryContainer = Color(0xFF3D301C), onTertiaryContainer = Color(0xFFF2DC93),
     error = Color(0xFFFFB4AB), onError = Color(0xFF690005),
-    background = Color(0xFF15120A), onBackground = Color(0xFFEDE0CB),
-    surface = Color(0xFF15120A), onSurface = Color(0xFFEDE0CB),
-    surfaceVariant = Color(0xFF4B442F), onSurfaceVariant = Color(0xFFCEC8B2),
-    outline = Color(0xFF97917D), surfaceTint = Color(0xFFFFB300),
+    background = Color(0xFF0A0908), onBackground = Color(0xFFF3ECDD),
+    surface = Color(0xFF0A0908), onSurface = Color(0xFFF3ECDD),
+    surfaceVariant = Color(0xFF1C1710), onSurfaceVariant = Color(0xFFC8BDA4),
+    outline = Color(0xFFA5802C), surfaceTint = Color(0xFFD9B95C),
 )
 
 // ── Orange ──

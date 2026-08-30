@@ -162,6 +162,8 @@
                 <data android:scheme="sq" />
                 <data android:scheme="shadowquic" />
                 <data android:scheme="owenkey" />
+                <data android:scheme="supernet" />
+                <data android:scheme="owenclave" />
             </intent-filter>
 
             <meta-data

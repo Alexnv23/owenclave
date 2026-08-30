@@ -131,7 +131,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         return groups.find { it.type == GroupType.BASIC }!!.id
     }
 
-    var appTheme by configurationStore.int(Key.APP_THEME) { 21 }
+    var appTheme by configurationStore.int(Key.APP_THEME) { 14 }
     var appLogo by configurationStore.int(Key.APP_LOGO) { 0 }
     var nightTheme by configurationStore.stringToInt(Key.NIGHT_THEME) { 1 }
     var navBarSize by configurationStore.int(Key.NAV_BAR_SIZE) { 1 }

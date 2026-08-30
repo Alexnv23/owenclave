@@ -6,7 +6,7 @@ include(":plugin:naive")
 
 include(":app")
 
-rootProject.name = "Owenclave"
+rootProject.name = "SuperNet"
 
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")

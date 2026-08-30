@@ -200,7 +200,31 @@ class ComposeMainActivity : ComponentActivity(), SagerConnection.Callback {
         val link = uri.toString()
         io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher {
             try {
-                if (link.startsWith("owenkey://", ignoreCase = true)) {
+                val dlScheme = uri.scheme?.lowercase()
+                if ((dlScheme == "supernet" || dlScheme == "owenclave") && uri.host == "subscription") {
+                    val subUrl = uri.getQueryParameter("url")
+                    if (!subUrl.isNullOrEmpty()) {
+                        val group = io.nekohasekai.sagernet.database.ProxyGroup(
+                            type = io.nekohasekai.sagernet.GroupType.SUBSCRIPTION
+                        ).apply {
+                            name = "SuperNet"
+                            subscription = io.nekohasekai.sagernet.database.SubscriptionBean().apply {
+                                link = subUrl
+                                name = "SuperNet"
+                            }
+                        }
+                        val created = io.nekohasekai.sagernet.database.GroupManager.createGroup(group)
+                        io.nekohasekai.sagernet.database.DataStore.selectedGroup = created.id
+                        io.nekohasekai.sagernet.group.GroupUpdater.executeUpdate(created, true)
+                        io.nekohasekai.sagernet.ktx.onMainDispatcher {
+                            android.widget.Toast.makeText(
+                                this@ComposeMainActivity,
+                                "SuperNet: подписка добавлена",
+                                android.widget.Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                } else if (link.startsWith("owenkey://", ignoreCase = true)) {
                     val import = io.nekohasekai.sagernet.ktx.parseOwenkeyLink(link)
                     if (import != null) {
                         io.nekohasekai.sagernet.database.GroupManager.createGroup(import.group)
