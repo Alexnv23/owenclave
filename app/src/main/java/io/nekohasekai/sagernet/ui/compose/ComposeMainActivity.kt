@@ -42,6 +42,8 @@ import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Construction
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Directions
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PowerSettingsNew
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Transform
@@ -92,6 +94,8 @@ import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.ui.compose.components.ServiceState
 import io.nekohasekai.sagernet.ui.compose.screens.ConfigurationScreen
+import io.nekohasekai.sagernet.ui.compose.screens.FriendsScreen
+import io.nekohasekai.sagernet.ui.compose.screens.HomeScreen
 import io.nekohasekai.sagernet.ui.compose.screens.GroupScreen
 import io.nekohasekai.sagernet.ui.compose.screens.LogcatScreen
 import io.nekohasekai.sagernet.ui.compose.screens.RouteScreen
@@ -106,7 +110,9 @@ enum class NavDestination(
     val labelRes: Int,
     val icon: ImageVector,
 ) {
+    HOME("home", R.string.menu_home, Icons.Filled.Home),
     CONFIGURATION("configuration", R.string.menu_configuration, Icons.Filled.Description),
+    FRIENDS("friends", R.string.menu_friends, Icons.Filled.Group),
     GROUP("group", R.string.menu_group, Icons.AutoMirrored.Filled.List),
     SETTINGS("settings", R.string.settings, Icons.Filled.Settings),
     ROUTE("route", R.string.menu_route, Icons.Filled.Directions),
@@ -388,7 +394,7 @@ fun MainScreen(
     onNightThemeChanged: (Int) -> Unit = {},
     onServiceModeChanged: () -> Unit = {},
 ) {
-    var currentDestination by remember { mutableStateOf(NavDestination.CONFIGURATION) }
+    var currentDestination by remember { mutableStateOf(NavDestination.HOME) }
     val snackbarHostState = remember { SnackbarHostState() }
     var batchTestProgress by remember { mutableStateOf<Pair<Int, Int>?>(null) }
     var navBarSize by remember { mutableStateOf(DataStore.navBarSize) }
@@ -429,6 +435,19 @@ fun MainScreen(
                 label = "screenTransition",
             ) { destination ->
                 when (destination) {
+                    NavDestination.HOME -> HomeScreen(
+                        serviceState = serviceState,
+                        onServiceToggle = onServiceToggle,
+                        onOpenLocations = {
+                            currentDestination = NavDestination.CONFIGURATION
+                            onDestinationChanged(NavDestination.CONFIGURATION)
+                        },
+                        onOpenSettings = {
+                            currentDestination = NavDestination.SETTINGS
+                            onDestinationChanged(NavDestination.SETTINGS)
+                        },
+                    )
+                    NavDestination.FRIENDS -> FriendsScreen()
                     NavDestination.CONFIGURATION -> ConfigurationScreen(
                         onMenuClick = {},
                         serviceRunning = serviceState.canStop,
@@ -457,7 +476,7 @@ fun MainScreen(
             }
 
             UnifiedBottomBar(
-                items = NavDestination.entries,
+                items = listOf(NavDestination.HOME, NavDestination.CONFIGURATION, NavDestination.FRIENDS),
                 selected = currentDestination,
                 onSelect = {
                     currentDestination = it

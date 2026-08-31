@@ -290,7 +290,7 @@ fun ConfigurationScreen(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
             OwenclaveTopAppBar(
-                title = "SuperNet",
+                title = "Локации",
                 scrollBehavior = scrollBehavior,
                 actions = {
                     // Only offer "test all" when there is at least one profile to test.
