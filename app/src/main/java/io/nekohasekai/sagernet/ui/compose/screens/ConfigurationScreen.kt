@@ -290,7 +290,7 @@ fun ConfigurationScreen(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
             OwenclaveTopAppBar(
-                title = "Configuration",
+                title = "SuperNet",
                 scrollBehavior = scrollBehavior,
                 actions = {
                     // Only offer "test all" when there is at least one profile to test.
@@ -357,7 +357,7 @@ fun ConfigurationScreen(
                                     contentAlignment = androidx.compose.ui.Alignment.Center,
                                 ) {
                                     EmptyState(
-                                        message = "No profiles. Tap + to add one.",
+                                        message = "Здесь появятся ваши локации. Добавьте подписку кнопкой +",
                                         icon = Icons.Filled.Add,
                                     )
                                 }
@@ -443,15 +443,6 @@ fun ConfigurationScreen(
                                         }
                                     }
                                 },
-                            )
-                        }
-                        item(key = "__sponsored__") {
-                            Text(
-                                text = "sponsored by openlibrecommunity",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-                                modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                             )
                         }
                     }
