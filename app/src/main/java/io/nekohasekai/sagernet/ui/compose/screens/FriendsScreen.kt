@@ -43,7 +43,7 @@ import kotlinx.coroutines.withContext
 private val Gold = Color(0xFFD9B95C)
 private val FCardBg = Color(0xFF15130F)
 private val FCardBorder = Color(0x33D9B95C)
-private const val URL_LK = "https://lk.supernet-tech.ru"
+private const val URL_LK = "https://lk.supernet-tech.ru/?open=referral"
 private const val FREE_MONTH_AT = 5   // оплативших друзей до «+1 месяц»
 
 private data class Tier(val n: String, val label: String, val reward: String)
