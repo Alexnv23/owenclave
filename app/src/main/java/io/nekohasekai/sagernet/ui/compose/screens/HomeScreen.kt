@@ -60,9 +60,9 @@ private val CardBorder = Color(0x33D9B95C)
 
 // ── Ссылки (боевые) ──
 private const val URL_LK = "https://lk.supernet-tech.ru"
-private const val URL_TG = "https://t.me/supernet_vpn_access"
-private const val URL_FAQ = "https://lk.supernet-tech.ru"
-private const val URL_SUPPORT = "https://t.me/SuperNetConnect_bot"
+private const val URL_FAQ = "https://lk.supernet-tech.ru/?open=faq"
+private const val TG_CHANNEL = "supernet_vpn_access"     // канал
+private const val TG_SUPPORT = "SuperNetConnect_bot"     // бот-поддержка
 
 private data class HomeData(
     val location: String = "",
@@ -146,6 +146,19 @@ fun HomeScreen(
                 Intent(Intent.ACTION_VIEW, Uri.parse(u)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             )
         } catch (_: Exception) {
+        }
+    }
+
+    // Открываем САМО приложение Telegram (tg://) — минуя Chrome и блокировку t.me.
+    // Если Telegram не установлен — падаем на https-ссылку.
+    fun openTelegram(domain: String) {
+        try {
+            context.startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse("tg://resolve?domain=$domain"))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        } catch (_: Exception) {
+            openUrl("https://t.me/$domain")
         }
     }
 
@@ -304,9 +317,9 @@ fun HomeScreen(
         // ── Быстрые кнопки ──
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             QuickButton("👤", "Кабинет", Modifier.weight(1f)) { openUrl(URL_LK) }
-            QuickButton("✈️", "Telegram", Modifier.weight(1f)) { openUrl(URL_TG) }
+            QuickButton("✈️", "Telegram", Modifier.weight(1f)) { openTelegram(TG_CHANNEL) }
             QuickButton("❓", "Вопросы", Modifier.weight(1f)) { openUrl(URL_FAQ) }
-            QuickButton("💬", "Поддержка", Modifier.weight(1f)) { openUrl(URL_SUPPORT) }
+            QuickButton("💬", "Поддержка", Modifier.weight(1f)) { openTelegram(TG_SUPPORT) }
         }
 
         Spacer(Modifier.height(14.dp))

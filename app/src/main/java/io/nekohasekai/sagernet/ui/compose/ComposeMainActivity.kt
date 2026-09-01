@@ -457,13 +457,7 @@ fun MainScreen(
                     )
                     NavDestination.GROUP -> GroupScreen(onMenuClick = {})
                     NavDestination.ROUTE -> RouteScreen(onMenuClick = {})
-                    NavDestination.SETTINGS -> SettingsScreen(
-                        onNavBarSizeChanged = { navBarSize = it },
-                        onMenuClick = {},
-                        onThemeChanged = onThemeChanged,
-                        onNightThemeChanged = onNightThemeChanged,
-                        onServiceModeChanged = onServiceModeChanged,
-                    )
+                    NavDestination.SETTINGS -> io.nekohasekai.sagernet.ui.compose.screens.AppSettingsScreen()
                     NavDestination.LOGCAT -> LogcatScreen(onMenuClick = {})
                     NavDestination.TRAFFIC -> TrafficScreen(
                         stats = appStats,
