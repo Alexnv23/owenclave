@@ -222,24 +222,14 @@ fun HomeScreen(
 
         Spacer(Modifier.height(28.dp))
 
-        // ── Большая кнопка ──
+        // ── Кнопка-«сердце» (пульс SuperNet) ──
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            Box(
-                modifier = Modifier
-                    .size(210.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF0E0C09))
-                    .border(if (connected) 4.dp else 2.dp, if (connected) Gold else GoldDim, CircleShape)
-                    .clickable(enabled = !connecting) { onServiceToggle() },
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = if (connected) Icons.Filled.Bolt else Icons.Filled.PowerSettingsNew,
-                    contentDescription = statusText,
-                    tint = Gold,
-                    modifier = Modifier.size(84.dp),
-                )
-            }
+            HeartbeatButton(
+                connected = connected,
+                connecting = connecting,
+                gold = Gold,
+                onClick = onServiceToggle,
+            )
         }
 
         Spacer(Modifier.height(20.dp))
