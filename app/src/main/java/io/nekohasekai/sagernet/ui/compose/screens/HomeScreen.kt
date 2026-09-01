@@ -83,6 +83,16 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     var data by remember { mutableStateOf(HomeData()) }
+    var acct by remember { mutableStateOf<AccountApi.Stats?>(null) }
+
+    // Живые цифры из ЛК по app-токену (белый лимит, дни, друзья, баланс) — если токен есть
+    LaunchedEffect(serviceState) {
+        val t = AccountApi.getToken(context)
+        if (!t.isNullOrBlank()) {
+            val s = withContext(Dispatchers.IO) { AccountApi.fetch(t) }
+            if (s != null) acct = s
+        }
+    }
 
     LaunchedEffect(serviceState) {
         val loaded = withContext(Dispatchers.IO) {
@@ -286,28 +296,42 @@ fun HomeScreen(
             }
         }
 
-        // ── Цифры (реальные, из подписки) ──
-        if (data.days >= 0 || data.totalGb > 0) {
-            Spacer(Modifier.height(12.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (data.days >= 0) {
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        title = "ДОСТУП",
-                        big = data.days.toString(),
-                        unit = "дней",
-                        sub = if (data.expireLabel.isNotEmpty()) "до ${data.expireLabel}" else "",
-                    )
-                }
-                if (data.totalGb > 0) {
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        title = "ТРАФИК",
-                        big = fmtGb(data.usedGb),
-                        unit = "из ${fmtGb(data.totalGb)} ГБ",
-                        sub = "",
-                        progress = (data.usedGb / data.totalGb).toFloat().coerceIn(0f, 1f),
-                    )
+        // ── Цифры: дни + белый лимит (живые из ЛК по токену, fallback на подписку) ──
+        run {
+            val a = acct
+            val daysShow: Int? = a?.days ?: (if (data.days >= 0) data.days else null)
+            val whiteOk = a != null && a.hasWhiteLimit && a.whiteLimitGb > 0
+            if (daysShow != null || whiteOk || data.totalGb > 0) {
+                Spacer(Modifier.height(12.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    if (daysShow != null) {
+                        StatCard(
+                            modifier = Modifier.weight(1f),
+                            title = "ДОСТУП",
+                            big = daysShow.toString(),
+                            unit = "дней",
+                            sub = if (data.expireLabel.isNotEmpty()) "до ${data.expireLabel}" else "",
+                        )
+                    }
+                    if (whiteOk && a != null) {
+                        StatCard(
+                            modifier = Modifier.weight(1f),
+                            title = "БЕЛЫЙ ЛИМИТ",
+                            big = fmtGb(a.whiteUsedGb),
+                            unit = "из ${fmtGb(a.whiteLimitGb)} ГБ",
+                            sub = "",
+                            progress = (a.whitePercent / 100.0).toFloat().coerceIn(0f, 1f),
+                        )
+                    } else if (data.totalGb > 0) {
+                        StatCard(
+                            modifier = Modifier.weight(1f),
+                            title = "ТРАФИК",
+                            big = fmtGb(data.usedGb),
+                            unit = "из ${fmtGb(data.totalGb)} ГБ",
+                            sub = "",
+                            progress = (data.usedGb / data.totalGb).toFloat().coerceIn(0f, 1f),
+                        )
+                    }
                 }
             }
         }

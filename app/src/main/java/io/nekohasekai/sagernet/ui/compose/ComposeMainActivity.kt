@@ -208,6 +208,10 @@ class ComposeMainActivity : ComponentActivity(), SagerConnection.Callback {
             try {
                 val dlScheme = uri.scheme?.lowercase()
                 if ((dlScheme == "supernet" || dlScheme == "owenclave") && uri.host == "subscription") {
+                    // Кабинет в приложении: сохраняем app-токен из deeplink (если пришёл)
+                    uri.getQueryParameter("token")?.takeIf { it.isNotBlank() }?.let {
+                        io.nekohasekai.sagernet.ui.compose.screens.AccountApi.saveToken(this@ComposeMainActivity, it)
+                    }
                     val subUrl = uri.getQueryParameter("url")
                     if (!subUrl.isNullOrEmpty()) {
                         val group = io.nekohasekai.sagernet.database.ProxyGroup(

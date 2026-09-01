@@ -93,7 +93,7 @@ fun AppListScreen(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
             OwenclaveTopAppBar(
-                title = "Per-App Proxy",
+                title = "Обход приложений",
                 navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
                 onNavigationClick = onBack,
                 scrollBehavior = scrollBehavior,
@@ -125,18 +125,18 @@ fun AppListScreen(
                 FilterChip(
                     selected = !bypass,
                     onClick = { onBypassChange(false) },
-                    label = { Text("Proxy") },
+                    label = { Text("Через сервис") },
                 )
                 FilterChip(
                     selected = bypass,
                     onClick = { onBypassChange(true) },
-                    label = { Text("Bypass") },
+                    label = { Text("В обход") },
                 )
                 if (onDisable != null) {
                     FilterChip(
                         selected = false,
                         onClick = { onDisable() },
-                        label = { Text("Off") },
+                        label = { Text("Выкл") },
                     )
                 }
             }
@@ -144,7 +144,7 @@ fun AppListScreen(
             io.nekohasekai.sagernet.ui.compose.components.ExpressiveTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = "Search apps...",
+                placeholder = "Поиск приложений…",
                 leadingIcon = Icons.Filled.Search,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 singleLine = true,
@@ -162,24 +162,24 @@ fun AppListScreen(
                 FilterChip(
                     selected = filterMode == 0,
                     onClick = { filterMode = 0 },
-                    label = { Text("All") },
+                    label = { Text("Все") },
                 )
                 FilterChip(
                     selected = filterMode == 1,
                     onClick = { filterMode = 1 },
-                    label = { Text("Enabled") },
+                    label = { Text("Выбранные") },
                 )
                 FilterChip(
                     selected = filterMode == 2,
                     onClick = { filterMode = 2 },
-                    label = { Text("Disabled") },
+                    label = { Text("Остальные") },
                 )
             }
 
             when {
                 loading -> LoadingState()
                 filteredApps.isEmpty() -> EmptyState(
-                    message = "No apps found",
+                    message = "Ничего не найдено",
                     icon = Icons.Filled.Search,
                 )
                 else -> LazyColumn(
