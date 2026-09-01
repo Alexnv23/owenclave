@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentPaste
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -211,6 +212,25 @@ fun ConfigurationScreen(
         onBatchTestProgress(null)
     }
 
+    fun refreshSubscription() {
+        scope.launch(Dispatchers.IO) {
+            try {
+                val group = SagerDatabase.groupDao.getById(DataStore.currentGroupId())
+                if (group != null && group.type == GroupType.SUBSCRIPTION && group.subscription?.link?.isNotEmpty() == true) {
+                    io.nekohasekai.sagernet.group.GroupUpdater.executeUpdate(group, true)
+                    withContext(Dispatchers.Main) {
+                        android.widget.Toast.makeText(context, "Обновляю подписку…", android.widget.Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        android.widget.Toast.makeText(context, "Нет подписки для обновления", android.widget.Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (_: Exception) {
+            }
+        }
+    }
+
     fun importFromClipboard() {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val text = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: return
@@ -310,6 +330,12 @@ fun ConfigurationScreen(
                         }
                         Spacer(Modifier.width(6.dp))
                     }
+                    IconButton(
+                        onClick = { refreshSubscription() },
+                    ) {
+                        Icon(Icons.Filled.Refresh, contentDescription = "Обновить подписку")
+                    }
+                    Spacer(Modifier.width(6.dp))
                     IconButton(
                         onClick = { importFromClipboard() },
                     ) {

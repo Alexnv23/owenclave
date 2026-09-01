@@ -30,6 +30,7 @@ object AccountApi {
     }
 
     data class Stats(
+        val displayName: String?,
         val days: Int?,
         val whiteUsedGb: Double,
         val whiteLimitGb: Double,
@@ -58,6 +59,7 @@ object AccountApi {
             val body = conn.inputStream.bufferedReader().use { it.readText() }
             val j = JSONObject(body)
             Stats(
+                displayName = if (j.isNull("display_name")) null else j.optString("display_name").takeIf { it.isNotBlank() },
                 days = if (j.isNull("days_remaining")) null else j.optInt("days_remaining"),
                 whiteUsedGb = j.optDouble("white_used_gb", 0.0),
                 whiteLimitGb = j.optDouble("white_limit_gb", 0.0),

@@ -203,7 +203,7 @@ fun HomeScreen(
                     fontFamily = FontFamily.Serif,
                 )
                 Text(
-                    "премиум-доступ",
+                    text = acct?.displayName?.let { "Привет, $it!" } ?: "премиум-доступ",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp,
                 )

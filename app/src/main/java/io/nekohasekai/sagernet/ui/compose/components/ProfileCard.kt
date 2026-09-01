@@ -96,8 +96,6 @@ fun ProfileCard(
         label = "cardScale",
     )
 
-    var showMenu by remember { mutableStateOf(false) }
-
     var now by remember { mutableStateOf(System.currentTimeMillis()) }
     LaunchedEffect(connected, connectionStart) {
         if (connected && connectionStart > 0) {
@@ -188,14 +186,7 @@ fun ProfileCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                Spacer(Modifier.height(2.dp))
-                Text(
-                    text = entity.displayAddress(),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = onContainerColor.copy(alpha = 0.7f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                // Адрес сервера НЕ показываем — защита локаций (юзер не видит IP/домен).
                 Spacer(Modifier.height(4.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -236,76 +227,29 @@ fun ProfileCard(
                             color = onContainerColor.copy(alpha = 0.5f),
                         )
                     }
+                    // Пинг → цветная точка: зелёная = связь есть, красная = нет. Проще для юзера.
                     if (pinging) {
                         CircularWavyProgressIndicator(
                             modifier = Modifier.size(12.dp),
                         )
                     } else if (entity.ping > 0) {
                         Text(
-                            text = "${entity.ping}ms",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = when (entity.status) {
-                                1 -> Color(0xFF4CAF50)
-                                3 -> Color(0xFFF44336)
-                                else -> onContainerColor.copy(alpha = 0.6f)
-                            },
+                            text = "●",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color(0xFF4CAF50),
                         )
                     } else if (entity.ping == -1) {
                         Text(
-                            text = "failed",
-                            style = MaterialTheme.typography.labelSmall,
+                            text = "●",
+                            style = MaterialTheme.typography.titleMedium,
                             color = Color(0xFFF44336),
                         )
                     }
                 }
             }
 
-            Spacer(Modifier.width(4.dp))
-
-            Box {
-                IconButton(
-                    onClick = { showMenu = true },
-                    modifier = Modifier.size(40.dp),
-                ) {
-                    Icon(
-                        Icons.Default.MoreVert,
-                        contentDescription = "Menu",
-                        tint = onContainerColor.copy(alpha = 0.7f),
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-                DropdownMenu(
-                    expanded = showMenu,
-                    onDismissRequest = { showMenu = false },
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Edit") },
-                        onClick = { showMenu = false; onEdit() },
-                        leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                    )
-                    if (onShare != null) {
-                        DropdownMenuItem(
-                            text = { Text("Share") },
-                            onClick = { showMenu = false; onShare() },
-                            leadingIcon = { Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                        )
-                    }
-                    if (onPing != null) {
-                        DropdownMenuItem(
-                            text = { Text("Test Latency") },
-                            onClick = { showMenu = false; onPing() },
-                            leadingIcon = { Icon(Icons.Default.NetworkCheck, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                        )
-                    }
-                    DropdownMenuItem(
-                        text = { Text("Delete") },
-                        onClick = { showMenu = false; onDelete() },
-                        leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                    )
-                }
-            }
+            // Меню (⋮) убрано целиком — защита: юзер не видит Edit/Share/адрес/UUID.
+            // Локация выбирается тапом по карточке (onClick).
         }
     }
 }
