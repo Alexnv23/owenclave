@@ -250,6 +250,28 @@ fun HomeScreen(
             textAlign = TextAlign.Center,
         )
 
+        // ── Таймер подключения ──
+        if (connected) {
+            var uptime by remember { mutableStateOf(0L) }
+            LaunchedEffect(Unit) {
+                while (true) {
+                    val start = ConnClock.connectedAtMs
+                    uptime = if (start > 0L) (System.currentTimeMillis() - start) / 1000 else 0L
+                    kotlinx.coroutines.delay(1000)
+                }
+            }
+            Spacer(Modifier.height(6.dp))
+            Text(
+                fmtUptime(uptime),
+                color = Gold,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+            )
+        }
+
         Spacer(Modifier.height(24.dp))
 
         // ── Текущая локация ──
@@ -434,6 +456,12 @@ private fun QuickButton(emoji: String, label: String, modifier: Modifier = Modif
 private fun fmtGb(v: Double): String {
     if (v < 0) return "0"
     return if (v >= 10) v.toInt().toString() else String.format("%.1f", v)
+}
+
+private fun fmtUptime(sec: Long): String {
+    val s = if (sec < 0) 0L else sec
+    val h = s / 3600; val m = (s % 3600) / 60; val ss = s % 60
+    return "%02d:%02d:%02d".format(h, m, ss)
 }
 
 private fun formatDate(ms: Long): String {

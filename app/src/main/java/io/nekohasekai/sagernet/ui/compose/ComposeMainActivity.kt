@@ -280,6 +280,12 @@ class ComposeMainActivity : ComponentActivity(), SagerConnection.Callback {
     override fun stateChanged(state: BaseService.State, profileName: String?, msg: String?) {
         serviceState.value = state
         serviceMessage.value = msg
+        if (state == BaseService.State.Connected) {
+            if (io.nekohasekai.sagernet.ui.compose.screens.ConnClock.connectedAtMs == 0L)
+                io.nekohasekai.sagernet.ui.compose.screens.ConnClock.connectedAtMs = System.currentTimeMillis()
+        } else {
+            io.nekohasekai.sagernet.ui.compose.screens.ConnClock.connectedAtMs = 0L
+        }
     }
 
     override fun trafficUpdated(profileId: Long, stats: TrafficStats, isCurrent: Boolean) {
@@ -299,6 +305,11 @@ class ComposeMainActivity : ComponentActivity(), SagerConnection.Callback {
         }
         SagerNet.started = state.canStop
         serviceState.value = state
+        if (state == BaseService.State.Connected &&
+            io.nekohasekai.sagernet.ui.compose.screens.ConnClock.connectedAtMs == 0L
+        ) {
+            io.nekohasekai.sagernet.ui.compose.screens.ConnClock.connectedAtMs = System.currentTimeMillis()
+        }
     }
 
     override fun onServiceDisconnected() {
