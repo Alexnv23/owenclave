@@ -57,7 +57,7 @@ class VpnService : BaseVpnService(),
     companion object {
         var instance: VpnService? = null
 
-        const val DEFAULT_MTU = 1500
+        const val DEFAULT_MTU = 1280
         val PRIVATE_VLAN4_CLIENT =
             DataStore.experimentalFlagsProperties.getProperty("tunIPv4Address")?.substringBefore("/") ?: "172.19.0.1"
         val PRIVATE_VLAN4_CLIENT_PREFIX =
