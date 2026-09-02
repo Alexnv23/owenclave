@@ -48,6 +48,9 @@ fun AppSettingsScreen() {
     var proxyApps by remember { mutableStateOf(DataStore.proxyApps) }
     var bypassLan by remember { mutableStateOf(DataStore.bypassLan) }
     var routeMode by remember { mutableIntStateOf(DataStore.routeMode) }
+    // ВРЕМЕННО: подбор рабочей пары движок+MTU для тяжёлой заливки. Убрать после фикса.
+    var tunImpl by remember { mutableIntStateOf(DataStore.tunImplementation) }
+    var mtuVal by remember { mutableIntStateOf(DataStore.mtu) }
 
     val version = remember {
         try {
@@ -130,6 +133,53 @@ fun AppSettingsScreen() {
                 Spacer(Modifier.height(8.dp))
                 Text(
                     "«По правилам» — рекомендуется: РФ-сайты напрямую, остальное через SuperNet.",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 12.sp,
+                )
+            }
+        }
+
+        Spacer(Modifier.height(18.dp))
+        SectionLabel("ДИАГНОСТИКА СЕТИ (временно)")
+
+        // Движок TUN
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = SCardBg,
+            border = androidx.compose.foundation.BorderStroke(1.dp, SCardBorder),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Column(modifier = Modifier.padding(14.dp)) {
+                Text("Движок", color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                Spacer(Modifier.height(10.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    Segment("gVisor", tunImpl == 0, Modifier.weight(1f)) { DataStore.tunImplementation = 0; tunImpl = 0 }
+                    Segment("System", tunImpl == 1, Modifier.weight(1f)) { DataStore.tunImplementation = 1; tunImpl = 1 }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(10.dp))
+
+        // MTU
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = SCardBg,
+            border = androidx.compose.foundation.BorderStroke(1.dp, SCardBorder),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Column(modifier = Modifier.padding(14.dp)) {
+                Text("MTU", color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                Spacer(Modifier.height(10.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
+                    Segment("1280", mtuVal == 1280, Modifier.weight(1f)) { DataStore.mtu = 1280; mtuVal = 1280 }
+                    Segment("1420", mtuVal == 1420, Modifier.weight(1f)) { DataStore.mtu = 1420; mtuVal = 1420 }
+                    Segment("1500", mtuVal == 1500, Modifier.weight(1f)) { DataStore.mtu = 1500; mtuVal = 1500 }
+                    Segment("9000", mtuVal == 9000, Modifier.weight(1f)) { DataStore.mtu = 9000; mtuVal = 9000 }
+                }
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "Сменил → выключи и включи подключение → тест заливки. Сейчас: ${if (tunImpl == 0) "gVisor" else "System"}, MTU $mtuVal.",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                 )
