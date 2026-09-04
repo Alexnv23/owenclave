@@ -41,6 +41,7 @@ import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Construction
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Devices
 import androidx.compose.material.icons.filled.Directions
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Home
@@ -115,6 +116,7 @@ enum class NavDestination(
     FRIENDS("friends", R.string.menu_friends, Icons.Filled.Group),
     GROUP("group", R.string.menu_group, Icons.AutoMirrored.Filled.List),
     SETTINGS("settings", R.string.settings, Icons.Filled.Settings),
+    DEVICES("devices", R.string.menu_devices, Icons.Filled.Devices),
     ROUTE("route", R.string.menu_route, Icons.Filled.Directions),
     LOGCAT("logcat", R.string.menu_log, Icons.Filled.BugReport),
     TRAFFIC("traffic", R.string.menu_traffic, Icons.Filled.Transform),
@@ -472,7 +474,18 @@ fun MainScreen(
                     )
                     NavDestination.GROUP -> GroupScreen(onMenuClick = {})
                     NavDestination.ROUTE -> RouteScreen(onMenuClick = {})
-                    NavDestination.SETTINGS -> io.nekohasekai.sagernet.ui.compose.screens.AppSettingsScreen()
+                    NavDestination.SETTINGS -> io.nekohasekai.sagernet.ui.compose.screens.AppSettingsScreen(
+                        onOpenDevices = {
+                            currentDestination = NavDestination.DEVICES
+                            onDestinationChanged(NavDestination.DEVICES)
+                        },
+                    )
+                    NavDestination.DEVICES -> io.nekohasekai.sagernet.ui.compose.screens.DevicesScreen(
+                        onBack = {
+                            currentDestination = NavDestination.SETTINGS
+                            onDestinationChanged(NavDestination.SETTINGS)
+                        },
+                    )
                     NavDestination.LOGCAT -> LogcatScreen(onMenuClick = {})
                     NavDestination.TRAFFIC -> TrafficScreen(
                         stats = appStats,

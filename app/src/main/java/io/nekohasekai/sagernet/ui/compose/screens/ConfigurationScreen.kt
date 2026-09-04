@@ -213,19 +213,10 @@ fun ConfigurationScreen(
     }
 
     fun refreshSubscription() {
+        // Надёжное обновление: явно ищет подписочную группу, сбрасывает зависший лок, показывает результат.
         scope.launch(Dispatchers.IO) {
             try {
-                val group = SagerDatabase.groupDao.getById(DataStore.currentGroupId())
-                if (group != null && group.type == GroupType.SUBSCRIPTION && group.subscription?.link?.isNotEmpty() == true) {
-                    io.nekohasekai.sagernet.group.GroupUpdater.executeUpdate(group, true)
-                    withContext(Dispatchers.Main) {
-                        android.widget.Toast.makeText(context, "Обновляю подписку…", android.widget.Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        android.widget.Toast.makeText(context, "Нет подписки для обновления", android.widget.Toast.LENGTH_SHORT).show()
-                    }
-                }
+                SubscriptionActions.refresh(context)
             } catch (_: Exception) {
             }
         }

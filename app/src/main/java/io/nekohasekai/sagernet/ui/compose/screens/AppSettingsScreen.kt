@@ -16,17 +16,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,10 +46,14 @@ import io.nekohasekai.sagernet.database.DataStore
 private val SGold = Color(0xFFD9B95C)
 private val SCardBg = Color(0xFF15130F)
 private val SCardBorder = Color(0x33D9B95C)
+private val SDanger = Color(0xFFE5484D)
 
 @Composable
-fun AppSettingsScreen() {
+fun AppSettingsScreen(onOpenDevices: () -> Unit = {}) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+    var confirmDeleteSub by remember { mutableStateOf(false) }
     var proxyApps by remember { mutableStateOf(DataStore.proxyApps) }
     var bypassLan by remember { mutableStateOf(DataStore.bypassLan) }
     var routeMode by remember { mutableIntStateOf(DataStore.routeMode) }
@@ -73,6 +82,42 @@ fun AppSettingsScreen() {
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
             fontFamily = FontFamily.Serif,
+        )
+
+        Spacer(Modifier.height(18.dp))
+        SectionLabel("АККАУНТ")
+
+        SettingRow(
+            title = "Мои устройства",
+            subtitle = "Какие устройства подключены — и удалить лишние",
+            onClick = onOpenDevices,
+        )
+
+        Spacer(Modifier.height(10.dp))
+
+        SettingRow(
+            title = if (refreshing) "Обновляю подписку…" else "Обновить подписку",
+            subtitle = "Подтянуть свежий список локаций из кабинета",
+            onClick = {
+                if (!refreshing) {
+                    refreshing = true
+                    scope.launch(Dispatchers.IO) {
+                        try {
+                            SubscriptionActions.refresh(context)
+                        } finally {
+                            refreshing = false
+                        }
+                    }
+                }
+            },
+        )
+
+        Spacer(Modifier.height(10.dp))
+
+        DangerRow(
+            title = "Удалить подписку",
+            subtitle = "Убрать все локации и отвязать кабинет с этого телефона",
+            onClick = { confirmDeleteSub = true },
         )
 
         Spacer(Modifier.height(18.dp))
@@ -207,6 +252,42 @@ fun AppSettingsScreen() {
                     Text("v$version", color = SGold, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 }
             }
+        }
+    }
+
+    if (confirmDeleteSub) {
+        AlertDialog(
+            onDismissRequest = { confirmDeleteSub = false },
+            title = { Text("Удалить подписку?") },
+            text = {
+                Text(
+                    "Подключение остановится, все локации удалятся, кабинет отвяжется. " +
+                        "Чтобы вернуться — добавь подписку заново из личного кабинета."
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmDeleteSub = false
+                    scope.launch(Dispatchers.IO) { SubscriptionActions.deleteAll(context) }
+                }) { Text("Удалить", color = SDanger) }
+            },
+            dismissButton = { TextButton(onClick = { confirmDeleteSub = false }) { Text("Отмена") } },
+        )
+    }
+}
+
+@Composable
+private fun DangerRow(title: String, subtitle: String, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(16.dp),
+        color = SCardBg,
+        border = androidx.compose.foundation.BorderStroke(1.dp, SDanger.copy(alpha = 0.5f)),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(title, color = SDanger, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+            Text(subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
         }
     }
 }
