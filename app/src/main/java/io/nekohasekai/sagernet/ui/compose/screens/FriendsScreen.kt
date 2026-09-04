@@ -44,15 +44,15 @@ private val Gold = Color(0xFFD9B95C)
 private val FCardBg = Color(0xFF15130F)
 private val FCardBorder = Color(0x33D9B95C)
 private const val URL_LK = "https://lk.supernet-tech.ru/?open=referral"
-private const val FREE_MONTH_AT = 5   // оплативших друзей до «+1 месяц»
+private const val FREE_MONTH_AT = 4   // оплативших друзей → накопил балансом на месяц (~30% с каждого)
 
 private data class Tier(val n: String, val label: String, val reward: String)
 
+// Реальные бонусы (bot.py, акция off с 15.05.2026): 30% на баланс с каждого + разовые за 1-го и 10-го.
 private val TIERS = listOf(
-    Tier("3", "3 друга", "+2 недели"),
-    Tier("5", "5 друзей", "+1 месяц"),
-    Tier("10", "10 друзей", "+2 месяца"),
-    Tier("25", "25 друзей", "+3 месяца"),
+    Tier("%", "Каждый друг с подпиской", "+30% на баланс"),
+    Tier("1", "1-й друг", "+7 дней +15 ГБ"),
+    Tier("10", "10-й друг", "+30 дней +50 ГБ"),
 )
 
 @Composable
