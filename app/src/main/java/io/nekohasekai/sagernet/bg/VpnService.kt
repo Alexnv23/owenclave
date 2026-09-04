@@ -57,7 +57,10 @@ class VpnService : BaseVpnService(),
     companion object {
         var instance: VpnService? = null
 
-        const val DEFAULT_MTU = 1280
+        // MTU для Reality-туннеля. 1500→«чёрная дыра» (файлы колом), 1280→скачивание ок, но
+        // заливка в Телеграм всё ещё колом. Тест 04.09: 1000 — форсим ниже, крупные аплоады
+        // (Телеграм) шлём мелкими чанками, чтобы не рвало upstream. IPv6 в TUN выключен → ниже 1280 безопасно.
+        const val DEFAULT_MTU = 1000
         val PRIVATE_VLAN4_CLIENT =
             DataStore.experimentalFlagsProperties.getProperty("tunIPv4Address")?.substringBefore("/") ?: "172.19.0.1"
         val PRIVATE_VLAN4_CLIENT_PREFIX =
@@ -181,7 +184,7 @@ class VpnService : BaseVpnService(),
 
         val builder = Builder().setConfigureIntent(SagerNet.configureIntent(this))
             .setSession(getString(R.string.app_name))
-            .setMtu(DataStore.mtu)
+            .setMtu(DEFAULT_MTU)
 
         builder.addAddress(PRIVATE_VLAN4_CLIENT, PRIVATE_VLAN4_CLIENT_PREFIX)
         if (DataStore.enableVPNInterfaceIPv6Address) {
@@ -291,7 +294,7 @@ class VpnService : BaseVpnService(),
         val config = TunConfig().apply {
             fileDescriptor = conn.fd
             protect = needIncludeSelf
-            mtu = DataStore.mtu
+            mtu = DEFAULT_MTU
             discardICMP = DataStore.discardICMP
             v2Ray = data.proxy!!.v2rayPoint
             addr4 = PRIVATE_VLAN4_CLIENT
